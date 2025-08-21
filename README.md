@@ -1,3 +1,6 @@
+# INSTAÇÃO
+sudo bash -c 'curl -fsSL https://raw.githubusercontent.com/EduHCavilha/proway-docker/main/deploy.sh | bash'
+
 # PENDENCIAS TÉCNICAS
 Prezado ilustre DevOps, Não consegui criar o DockerFile para o projeto backend, pode me ajudar?
 
