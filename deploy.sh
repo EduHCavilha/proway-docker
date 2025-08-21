@@ -16,14 +16,15 @@ require_root() {
   fi
 }
 
+# ===== Instalar dependências =====
 install_deps() {
   log "Instalando Docker, docker-compose, git, curl..."
   apt-get update -y
-  apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release git docker.io
-  apt-get install -y docker-compose-plugin || apt-get install -y docker-compose
+  apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release git docker.io docker-compose
   systemctl enable --now docker
 }
 
+# ===== Clonar ou atualizar repositório =====
 ensure_repo() {
   mkdir -p "$WORKDIR"
   cd "$WORKDIR"
@@ -38,6 +39,7 @@ ensure_repo() {
   fi
 }
 
+# ===== Rebuild automático e start =====
 rebuild_and_up() {
   cd "$WORKDIR"
   CURRENT_HASH="$(git rev-parse HEAD)"
@@ -47,17 +49,20 @@ rebuild_and_up() {
 
   if [[ "$CURRENT_HASH" != "$LAST_HASH" ]]; then
     log "Commit mudou: $LAST_HASH -> $CURRENT_HASH. Rebuild completo."
-    docker compose build --pull --no-cache
+    docker-compose pull
+    docker-compose build --no-cache
     echo "$CURRENT_HASH" > "$LAST_HASH_FILE"
   else
     log "Sem mudanças no código. Atualizando imagens base."
-    docker compose build --pull
+    docker-compose pull
+    docker-compose build
   fi
 
   log "Subindo containers..."
-  docker compose up -d
+  docker-compose up -d
 }
 
+# ===== Instalar cron =====
 install_cron() {
   log "Configurando cron para rodar a cada 5 minutos"
   touch "$CRON_LOG"
@@ -66,6 +71,7 @@ install_cron() {
   (crontab -l 2>/dev/null; echo "*/5 * * * * /usr/bin/env bash $SCRIPT_PATH >> $CRON_LOG 2>&1") | crontab -
 }
 
+# ===== Execução principal =====
 main() {
   require_root
   install_deps
