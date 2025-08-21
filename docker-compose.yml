@@ -1,0 +1,23 @@
+version: "3.9"
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: pizzaria/frontend:latest
+    container_name: pizzaria-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: pizzaria/backend:latest
+    container_name: pizzaria-backend
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
