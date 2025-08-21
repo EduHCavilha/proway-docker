@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# ===== Configurações =====
 REPO_URL="https://github.com/EduHCavilha/proway-docker.git"
 WORKDIR="/opt/pizzaria"
 SCRIPT_PATH="$WORKDIR/deploy.sh"
@@ -16,7 +15,6 @@ require_root() {
   fi
 }
 
-# ===== Instalar dependências =====
 install_deps() {
   log "Instalando Docker, docker-compose, git, curl..."
   apt-get update -y
@@ -24,7 +22,6 @@ install_deps() {
   systemctl enable --now docker
 }
 
-# ===== Clonar ou atualizar repositório =====
 ensure_repo() {
   mkdir -p "$WORKDIR"
   cd "$WORKDIR"
@@ -39,7 +36,6 @@ ensure_repo() {
   fi
 }
 
-# ===== Rebuild automático e start =====
 rebuild_and_up() {
   cd "$WORKDIR"
   CURRENT_HASH="$(git rev-parse HEAD)"
@@ -62,7 +58,6 @@ rebuild_and_up() {
   docker-compose up -d
 }
 
-# ===== Instalar cron =====
 install_cron() {
   log "Configurando cron para rodar a cada 5 minutos"
   touch "$CRON_LOG"
@@ -71,7 +66,6 @@ install_cron() {
   (crontab -l 2>/dev/null; echo "*/5 * * * * /usr/bin/env bash $SCRIPT_PATH >> $CRON_LOG 2>&1") | crontab -
 }
 
-# ===== Execução principal =====
 main() {
   require_root
   install_deps
