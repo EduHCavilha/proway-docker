@@ -1,4 +1,4 @@
-# INSTAÇÃO
+# INSTALAÇÃO
 sudo bash -c 'curl -fsSL https://raw.githubusercontent.com/EduHCavilha/proway-docker/main/deploy.sh | bash'
 
 # PENDENCIAS TÉCNICAS
